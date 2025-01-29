@@ -42,7 +42,8 @@ class LRU_Cache:
         if key not in self.cache:
             return -1
         
-        # Move the key to the end because it was recently used, and return its value
+        # Since both "get" and "set" operations are considered as an "use operation"
+        # move the key that has just been used to the end, and return its value.
         self.cache.move_to_end(key)
         return self.cache[key]
 
@@ -80,22 +81,22 @@ if __name__ == '__main__':
     our_cache.set(2, 2)
     our_cache.set(3, 3)
     our_cache.set(4, 4)
-    assert our_cache.get(1) == 1     # Returns 1
-    assert our_cache.get(2) == 2     # Returns 2
-    assert our_cache.get(9) == -1    # Returns -1, because 9 is not in the cache
+    assert our_cache.get(1) == 1      # Returns 1
+    assert our_cache.get(2) == 2      # Returns 2
+    assert our_cache.get(9) == -1     # Returns -1, because 9 is not in the cache
 
     our_cache.set(5, 5)
-    our_cache.set(6, 6)              # This should evict key 3
-    assert our_cache.get(3) == -1    # Returns -1, 3 was evicted
+    our_cache.set(6, 6)               # This should evict key 3
+    assert our_cache.get(3) == -1     # Returns -1, 3 was evicted
 
     # Test Case 2: Edge case with a single element cache
     test_2_cache = LRU_Cache(1)
     test_2_cache.set(1, 1)
-    assert test_2_cache.get(1) == 1  # Return 1
+    assert test_2_cache.get(1) == 1   # Return 1
     test_2_cache.set(2, 2)
-    assert test_2_cache.get(1) == -1 # Return -1, 1 was evicted
+    assert test_2_cache.get(1) == -1  # Return -1, 1 was evicted
 
     # Test Case 3: Empty cache behavior
     test_3_cache = LRU_Cache(0)
-    test_3_cache.set(1, 1)  # Does not store anything as capacity is 0
-    assert test_3_cache.get(1) ==-1  # Return -1 as nothing is stored
+    test_3_cache.set(1, 1)            # Does not store anything as capacity is 0
+    assert test_3_cache.get(1) == -1  # Return -1 as nothing is stored
