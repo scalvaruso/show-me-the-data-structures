@@ -22,7 +22,7 @@ class Node:
             The value to be stored in the node.
         """
         self.value: int = value
-        self.next: Optional[Node] = None
+        self.next: Optional["Node"] = None
 
     def __repr__(self) -> str:
         """
@@ -44,6 +44,8 @@ class LinkedList:
     -----------
     head : Optional[Node]
         The head node of the linked list.
+    tail : Optional[Node]
+        The tail node of the linked list (for efficient appends).
     """
 
     def __init__(self) -> None:
@@ -51,6 +53,7 @@ class LinkedList:
         Constructs all the necessary attributes for the LinkedList object.
         """
         self.head: Optional[Node] = None
+        self.tail: Optional[Node] = None
 
     def __str__(self) -> str:
         """
@@ -66,26 +69,40 @@ class LinkedList:
         while cur_head:
             out_string += str(cur_head.value) + " -> "
             cur_head = cur_head.next
-        return out_string
+        return out_string.rstrip(" -> ")
 
     def append(self, value: int) -> None:
         """
-        Append a new node with the given value to the end of the linked list.
+        Append a new node with the given value in sorted order into the linked list.
 
         Parameters:
         -----------
         value : int
             The value to be stored in the new node.
         """
-        if self.head is None:
-            self.head = Node(value)
+        new_node = Node(value)
+
+        # Insert at the beginning if list is empty or value is smaller than head
+        if self.head is None or self.head.value >= value:
+            new_node.next = self.head
+            self.head = new_node
+            if self.tail is None:
+                self.tail = new_node  # Update tail if list was empty
             return
 
-        node: Node = self.head
-        while node.next:
-            node = node.next
+        # Find correct insertion point
+        prev, current = None, self.head
+        while current and current.value < value:
+            prev = current
+            current = current.next
 
-        node.next = Node(value)
+        # Insert new node in the correct position
+        prev.next = new_node
+        new_node.next = current
+
+        # Update tail if inserted at the end
+        if current is None:
+            self.tail = new_node
 
     def size(self) -> int:
         """
@@ -101,7 +118,6 @@ class LinkedList:
         while node:
             size += 1
             node = node.next
-
         return size
 
 
@@ -122,10 +138,12 @@ def union(llist_1: LinkedList, llist_2: LinkedList) -> LinkedList:
         A new linked list containing all unique elements from both input linked lists.
     """
     # Use a set to store all unique elements
-    pass
+    set_1 = linked_list_to_set(llist_1)
+    set_2 = linked_list_to_set(llist_2)
 
     # Create a new linked list to store the union
-    pass
+    return set_to_linked_list(set_1 | set_2)
+
 
 def intersection(llist_1: LinkedList, llist_2: LinkedList) -> LinkedList:
     """
@@ -144,13 +162,31 @@ def intersection(llist_1: LinkedList, llist_2: LinkedList) -> LinkedList:
         A new linked list containing all elements that are present in both input linked lists.
     """
     # Use sets to find the intersection
-    pass
+    set_1 = linked_list_to_set(llist_1)
+    set_2 = linked_list_to_set(llist_2)
 
     # Find the intersection of both sets
-    pass
-
     # Create a new linked list to store the intersection
-    pass
+    return set_to_linked_list(set_1 & set_2)
+
+
+def linked_list_to_set(l_list: LinkedList) -> set:
+    """Convert a linked list to a set of its values."""
+    set_list = set()
+    current = l_list.head
+    while current:
+        set_list.add(current.value)  # Add each node's value to the set
+        current = current.next
+    return set_list
+
+
+def set_to_linked_list(elements_set: set) -> LinkedList:
+    """Convert a set of values to a linked list."""
+    new_linked_list = LinkedList()
+    for item in elements_set:
+        new_linked_list.append(item)  # Append each item to the linked list
+    return new_linked_list
+
 
 if __name__ == "__main__":
     ## Test case 1
