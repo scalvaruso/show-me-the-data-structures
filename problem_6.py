@@ -82,21 +82,29 @@ class LinkedList:
         """
         new_node = Node(value)
 
-        # Insert at the beginning if list is empty or value is smaller than head
-        if self.head is None or self.head.value >= value:
+        # If list is empty, set head and tail
+        if self.head is None:
+            self.head = self.tail = new_node
+            return
+        
+        # Fast append if value is greater than tail
+        if self.tail.value <= value:
+            self.tail.next = new_node
+            self.tail = new_node
+            return
+        
+        # Insert at the beginning if smallest
+        if self.head.value >= value:
             new_node.next = self.head
             self.head = new_node
-            if self.tail is None:
-                self.tail = new_node  # Update tail if list was empty
             return
 
-        # Find correct insertion point
+        # General case: Find correct position
         prev, current = None, self.head
         while current and current.value < value:
             prev = current
             current = current.next
 
-        # Insert new node in the correct position
         prev.next = new_node
         new_node.next = current
 
@@ -137,6 +145,11 @@ def union(llist_1: LinkedList, llist_2: LinkedList) -> LinkedList:
     LinkedList
         A new linked list containing all unique elements from both input linked lists.
     """
+
+    # Chech if input is a linked list
+    if not isinstance(llist_1, LinkedList) or not isinstance(llist_2, LinkedList):
+        return LinkedList()  # Return an empty linked list to maintain consistency with expected return types
+    
     # Use a set to store all unique elements
     set_1 = linked_list_to_set(llist_1)
     set_2 = linked_list_to_set(llist_2)
@@ -161,6 +174,10 @@ def intersection(llist_1: LinkedList, llist_2: LinkedList) -> LinkedList:
     LinkedList
         A new linked list containing all elements that are present in both input linked lists.
     """
+    # Chech if input is a linked list
+    if not isinstance(llist_1, LinkedList) or not isinstance(llist_2, LinkedList):
+        return LinkedList()  # Return an empty linked list to maintain consistency with expected return types
+    
     # Use sets to find the intersection
     set_1 = linked_list_to_set(llist_1)
     set_2 = linked_list_to_set(llist_2)
@@ -181,15 +198,16 @@ def linked_list_to_set(l_list: LinkedList) -> set:
 
 
 def set_to_linked_list(elements_set: set) -> LinkedList:
-    """Convert a set of values to a linked list."""
+    """Convert a set to a linked list while maintaining sorted order."""
     new_linked_list = LinkedList()
-    for item in elements_set:
-        new_linked_list.append(item)  # Append each item to the linked list
+    for item in sorted(elements_set):   # Sorting before inserting to ensures correct order
+        new_linked_list.append(item)    # Append each item to the linked list
     return new_linked_list
 
 
 if __name__ == "__main__":
-    ## Test case 1
+    ## Test case 1: Two linked lists with common elemnets
+    print("Test Case 1: Two linked lists with common elemnets")
     linked_list_1 = LinkedList()
     linked_list_2 = LinkedList()
 
@@ -202,29 +220,65 @@ if __name__ == "__main__":
     for i in element_2:
         linked_list_2.append(i)
 
-    print("Test Case 1:")
+
     print("Union:", union(linked_list_1, linked_list_2)) # Expected: 1, 2, 3, 4, 6, 9, 11, 21, 32, 35, 65
     print("Intersection:", intersection(linked_list_1, linked_list_2)) # Expected: 4, 6, 21
 
-    ## Test case 2
+
+    ## Test case 2: Two linked lists without common elemnets
+    print("\nTest Case 2: Two linked lists without common elemnets")
     linked_list_3 = LinkedList()
     linked_list_4 = LinkedList()
 
-    element_1 = [3, 2, 4, 35, 6, 65, 6, 4, 3, 23]
-    element_2 = [1, 7, 8, 9, 11, 21, 1]
+    element_3 = [3, 2, 4, 35, 6, 65, 6, 4, 3, 23]
+    element_4 = [1, 7, 8, 9, 11, 21, 1]
 
-    for i in element_1:
+    for i in element_3:
         linked_list_3.append(i)
 
-    for i in element_2:
+    for i in element_4:
         linked_list_4.append(i)
 
-    print("\nTest Case 2:")
     print("Union:", union(linked_list_3, linked_list_4)) # Expected: 1, 2, 3, 4, 6, 7, 8, 9, 11, 21, 23, 35, 65
     print("Intersection:", intersection(linked_list_3, linked_list_4)) # Expected: empty
 
-    ## Test case 3
-    pass
 
-    ## Test case 4
-    pass
+    ## Test case 3: One linked list is empty
+    print("\nTest case 3: One linked list is empty")
+    empty_list_1 = LinkedList()
+
+    print("Union:", union(linked_list_1, empty_list_1))  # Expected: 2, 3, 4, 6, 21, 35, 65
+    print("Intersection:", intersection(linked_list_1, empty_list_1))  # Expected: Empty List
+
+
+    ## Test case 4: Both linked lists are empty
+    print("\nTest case 4: Both linked lists are empty")
+    empty_list_2 = LinkedList()
+
+    print("Union:", union(empty_list_1, empty_list_2))  # Expected: Empty List
+    print("Intersection:", intersection(empty_list_1, empty_list_2))  # Expected: Empty List
+
+
+    ## Test case 5: One element is not a linked list
+    print("\nTest case 5: One element is not a linked list")
+    not_a_linked_list_1 = [6, 32, 4, 9, 6, 1, 11, 21, 1]
+
+    print("Union:", union(linked_list_1, not_a_linked_list_1))  # Expected: Empty List
+    print("Intersection:", intersection(linked_list_1, not_a_linked_list_1))  # Expected: Empty List
+
+
+    ## Test case 6: # Large input test (One million elements)
+    print("\nTest case 6: Large input test (One million elements)")
+    large_linked_list_1 = LinkedList()
+    large_linked_list_2 = LinkedList()
+
+    for i in range(0, 1000000):  # 1 million elements
+        large_linked_list_1.append(i)
+
+    for i in range(500000, 31250500000, 31250):  # Overlapping range
+        large_linked_list_2.append(i)
+
+    # Check performance
+    print("Union Size:", union(large_linked_list_1, large_linked_list_2).size())    # Expected: 1999984
+    print("Intersection:", intersection(large_linked_list_1, large_linked_list_2))  # Expected:
+    # 500000, 531250, 562500, 593750, 625000, 656250, 687500, 718750, 750000, 781250, 812500, 843750, 875000, 906250, 937500, 968750
