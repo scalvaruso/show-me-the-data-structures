@@ -186,4 +186,5 @@ if __name__ == "__main__":
     print(is_user_in_group("deep_user_100", deep_parent))   # Expected output: True
     print(is_user_in_group("deep_user_0", current_group))   # Expected output: False
     print(is_user_in_group("deep_user_50", current_group))  # Expected output: False
+    print(is_user_in_group("deep_user_50", current_group))  # Expected output: False
     print(is_user_in_group("deep_user_100", current_group)) # Expected output: True

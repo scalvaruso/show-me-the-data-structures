@@ -275,10 +275,10 @@ if __name__ == "__main__":
     for i in range(0, 1000000):  # 1 million elements
         large_linked_list_1.append(i)
 
-    for i in range(500000, 31250500000, 31250):  # Overlapping range
+    for i in range(500000, 31250500000, 31250):  # Overlapping range between 500000 and 1000000
         large_linked_list_2.append(i)
 
-    # Check performance
+    # For Union I will check the resulting size that should be equal to the sum of the unique elements of each lists minus the number of common elements
     print("Union Size:", union(large_linked_list_1, large_linked_list_2).size())    # Expected: 1999984
     print("Intersection:", intersection(large_linked_list_1, large_linked_list_2))  # Expected:
     # 500000, 531250, 562500, 593750, 625000, 656250, 687500, 718750, 750000, 781250, 812500, 843750, 875000, 906250, 937500, 968750
